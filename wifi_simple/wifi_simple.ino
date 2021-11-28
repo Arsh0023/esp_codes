@@ -1,20 +1,21 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char* ssid = "Airtel_9034156560";
-const char* password = "air37671";
+const char* ssid = "";
+const char* password = "";
 
 const int led = 5;
 const int ir1 = 18; //active low. //will be for the input of the visitor.
 const int ir2 = 19; // will be for the outgoing of the visitor.
 const int temp_sensor = 34;
 
-float max_temp = 20;
+float max_temp = 29;
 int visitor_in = 0;
 int visitor_out = 0;
 
 String host_in = "https://arsh0023.pythonanywhere.com/api/setvisitorin/123/"; //make sure to check the passphrase.
 String host_out = "https://arsh0023.pythonanywhere.com/api/setvisitorout/123/";
+String temperature_url = "https://arsh0023.pythonanywhere.com/api/settemp/123/";
 
 void initWiFi() {
   WiFi.mode(WIFI_STA);
@@ -62,6 +63,7 @@ void loop() {
   
   HTTPClient http;
   HTTPClient http1;
+  HTTPClient t_http;
   
   if(ir1_val == 0 and flag == 1)
   {
@@ -97,7 +99,11 @@ void loop() {
   Serial.println(visitor_out);
   http.end();
   http1.end();
-  delay(300);
+  String set_temp = temperature_url+String(val);
+  t_http.begin(set_temp);
+  int t_code = t_http.GET();
+  t_http.end();
+  delay(500);
   
 //  if(ir1_val == 0) // this means when the value is 0 the person is there.
 //  {
